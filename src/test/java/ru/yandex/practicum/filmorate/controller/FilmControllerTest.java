@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -15,23 +16,34 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class FilmControllerTest {
 
-    @Autowired
-    FilmController filmController;
 
     @Test
-    void postFilm() {
+    void dontCorrectValidation(){
+        FilmController filmController=new FilmController();
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");
-        film.setReleaseDate(LocalDate.parse("1988-02-02"));
+        film.setReleaseDate(LocalDate.parse("1788-02-02"));
         film.setDuration(120);
-        Film noCorrect=new Film();
-        filmController.postFilm(film);
-        filmController.postFilm(noCorrect);
+        assertThrows(ValidationException.class, ()->{
+            filmController.postFilm(film);
+        });
+        film.setReleaseDate(LocalDate.parse("1988-02-02"));
+        film.setName("");
+        assertThrows(ValidationException.class, ()->{
+            filmController.postFilm(film);
+        });
+        film.setName("film");
+        film.setDuration(-120);
+        assertThrows(ValidationException.class, ()->{
+            filmController.postFilm(film);
+        });
     }
 
+
     @Test
-    void getFilms() {
+    void postAndGetFilms() throws ValidationException {
+        FilmController filmController=new FilmController();
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");
@@ -45,7 +57,8 @@ class FilmControllerTest {
 
 
     @Test
-    void putFilm() {
+    void putFilm() throws ValidationException {
+        FilmController filmController=new FilmController();
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");

@@ -34,20 +34,20 @@ public class Validator {
             log.error("user email is empty");
             return false;
         }
-        if (!user.getEmail().contains("@")){
+        if (!user.getEmail().contains("@")) {
             log.error("user email dont contain symbol @");
             return false;
         }
-        if (user.getLogin()==null|| user.getLogin().isEmpty()){
+        if (user.getLogin() == null || user.getLogin().isEmpty()){
             log.error("user login is empty");
             return false;
         }
-        if (user.getLogin().contains(" ")){
+        if (user.getLogin().contains(" ")) {
             // "комбинация \s просит обновить JDK до 15?"
             log.error("user login contain whitespace");
             return false;
         }
-        if(user.getBirthday().isAfter(LocalDate.now())){
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("users birthday dont correct");
             return false;
         }

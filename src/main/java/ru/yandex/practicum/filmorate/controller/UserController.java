@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,22 +16,22 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedUser;
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
-    private Map<Long, User>users=new HashMap<>();
-    public static Long staticId=0L;
+    private Map<Long, User> users = new HashMap<>();
+    public Long generatedId = 0L;
 
     @GetMapping
-    List<User>getUsers(){
+    public List<User> getUsers() {
         log.info("Текущее число пользователей: {}", users.size());
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
-    User postUser(@RequestBody User user){
-        if(validatedUser(user)){
-            if(user.getName()==null||user.getName().isEmpty()){
+    public User postUser(@RequestBody User user) throws ValidationException {
+        if (validatedUser(user)) {
+            if (user.getName() == null || user.getName().isEmpty()){
                 user.setName(user.getLogin());
             }
-            user.setId(staticId++);
+            user.setId(generatedId++);
             users.put(user.getId(),user);
         } else {
             throw new ValidationException();
@@ -42,19 +42,21 @@ public class UserController {
     }
 
     @PutMapping
-    User putUser(@PathVariable Long id,
-                 @RequestBody User user){
-        if(validatedUser(user)){
-            if(user.getName()==null||user.getName().isEmpty()){
+    public User putUser(@PathVariable Long id,
+                 @RequestBody User user) throws ValidationException {
+        if (validatedUser(user)) {
+            if (user.getName() == null || user.getName().isEmpty()){
                 user.setName(user.getLogin());
             }
-                if (users.get(id)==null){
+                if (!users.containsKey(id)) {
                     users.put(id,user);
                     log.debug("Пользователь не найден. добавлен новый пользователь");
-                }else {
+                } else {
                     users.put(id,user);
                     log.debug("Польователь c идентификатором {} изменен", user.getId());
                 }
+        } else {
+            throw new ValidationException();
         }
         return user;
     }
