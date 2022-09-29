@@ -17,7 +17,7 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedUser;
 @RequestMapping("/users")
 public class UserController {
     private Map<Long, User> users = new HashMap<>();
-    public Long generatedId = 0L;
+    public Long generatedId = 1L;
 
     @GetMapping
     public List<User> getUsers() {

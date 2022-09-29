@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedFilm;
 @RequestMapping("/films")
 public class FilmController {
     private Map<Long, Film> films = new HashMap<>();
-    private Long generatedId = 0L;
+    private Long generatedId = 1L;
     @GetMapping
     public List<Film> getFilms() {
         log.info("Текущее число фильмов: {}", films.size());
