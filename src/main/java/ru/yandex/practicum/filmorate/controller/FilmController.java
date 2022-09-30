@@ -18,7 +18,7 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedFilm;
 @RequestMapping("/films")
 public class FilmController {
     private Map<Long, Film> films = new HashMap<>();
-    private Long generatedId = 0L;
+    private Long generatedId = 1L;
     @GetMapping
     public List<Film> getFilms() {
         log.info("Текущее число фильмов: {}", films.size());
@@ -39,9 +39,13 @@ public class FilmController {
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) throws ValidationException {
-        Long id = film.getId();
         if (validatedFilm(film)) {
-                if (!films.containsKey(id)){
+            Long id = film.getId();
+            if (id<0){
+                log.error("id is less than zero");
+                throw new ValidationException();
+            }
+            if (!films.containsKey(id)){
                     films.put(film.getId(), film);
                     log.debug("Фильм не найден. добавлен новый фильм");
                 } else {

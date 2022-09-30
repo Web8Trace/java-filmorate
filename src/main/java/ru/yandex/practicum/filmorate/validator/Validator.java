@@ -43,7 +43,6 @@ public class Validator {
             return false;
         }
         if (user.getLogin().contains(" ")) {
-            // "комбинация \s просит обновить JDK до 15?"
             log.error("user login contain whitespace");
             return false;
         }
@@ -51,6 +50,7 @@ public class Validator {
             log.error("users birthday dont correct");
             return false;
         }
+
         log.info("user is valid");
         return true;
     }

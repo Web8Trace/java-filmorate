@@ -17,7 +17,7 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedUser;
 @RequestMapping("/users")
 public class UserController {
     private Map<Long, User> users = new HashMap<>();
-    public Long generatedId = 0L;
+    public Long generatedId = 1L;
 
     @GetMapping
     public List<User> getUsers() {
@@ -43,8 +43,12 @@ public class UserController {
 
     @PutMapping
     public User putUser(@RequestBody User user) throws ValidationException {
-        Long id = user.getId();
         if (validatedUser(user)) {
+            Long id = user.getId();
+            if (id<0){
+                log.error("id is less than zero");
+                throw new ValidationException();
+            }
             if (user.getName() == null || user.getName().isEmpty()){
                 user.setName(user.getLogin());
             }
