@@ -73,7 +73,7 @@ class UserControllerTest {
         user.setEmail("usere@email.com");
         user.setLogin("corUser");
         userList.add(user);
-        userController.putUser(user);
+        //userController.putUser(user);
         Assertions.assertEquals(userList, userController.getUsers());
     }
 }
