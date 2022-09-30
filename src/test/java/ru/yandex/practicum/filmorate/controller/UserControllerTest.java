@@ -72,7 +72,7 @@ class UserControllerTest {
         user.setBirthday(LocalDate.parse("1985-01-01"));
         user.setEmail("usere@email.com");
         user.setLogin("corUser");
-        user.setId(0L);
+        user.setId(1L);
         userList.add(user);
         userController.putUser(user);
         Assertions.assertEquals(userList, userController.getUsers());

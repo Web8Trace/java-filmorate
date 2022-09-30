@@ -66,7 +66,7 @@ class FilmControllerTest {
         film.setDuration(120);
         filmController.postFilm(film);
         film.setName("new Film");
-        film.setId(0L);
+        film.setId(1L);
         filmController.putFilm(film);
         List<Film>films=new ArrayList<>();
         films.add(film);
