@@ -38,8 +38,8 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film putFilm(@PathVariable Long id,
-                 @RequestBody Film film) throws ValidationException {
+    public Film putFilm(@RequestBody Film film) throws ValidationException {
+        Long id = film.getId();
         if (validatedFilm(film)) {
                 if (!films.containsKey(id)){
                     films.put(film.getId(), film);
@@ -49,7 +49,7 @@ public class FilmController {
                     log.debug("Фильм изменен под идентификатором {}", film.getId());
 
                 }
-            }else {
+            } else {
             throw new ValidationException();
         }
         return film;

@@ -42,8 +42,8 @@ public class UserController {
     }
 
     @PutMapping
-    public User putUser(@PathVariable Long id,
-                 @RequestBody User user) throws ValidationException {
+    public User putUser(@RequestBody User user) throws ValidationException {
+        Long id = user.getId();
         if (validatedUser(user)) {
             if (user.getName() == null || user.getName().isEmpty()){
                 user.setName(user.getLogin());
