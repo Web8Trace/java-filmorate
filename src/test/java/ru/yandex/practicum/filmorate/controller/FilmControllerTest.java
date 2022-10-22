@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ class FilmControllerTest {
 
     @Test
     void dontCorrectValidation(){
-        FilmController filmController=new FilmController();
+        FilmController filmController=new FilmController(new FilmService(new InMemoryFilmStorage()));
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");
@@ -43,7 +45,7 @@ class FilmControllerTest {
 
     @Test
     void postAndGetFilms() throws ValidationException {
-        FilmController filmController=new FilmController();
+        FilmController filmController=new FilmController(new FilmService(new InMemoryFilmStorage()));
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");
@@ -58,7 +60,7 @@ class FilmControllerTest {
 
     @Test
     void putFilm() throws ValidationException {
-        FilmController filmController=new FilmController();
+        FilmController filmController=new FilmController(new FilmService(new InMemoryFilmStorage()));
         Film film =new Film();
         film.setName("film");
         film.setDescription("very interesting film");
