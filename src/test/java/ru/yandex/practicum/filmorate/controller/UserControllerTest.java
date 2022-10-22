@@ -5,8 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ class UserControllerTest {
 
     @Test
     void dontCorrectValidation() {
-        UserController userController=new UserController();
+        UserController userController=new UserController(new UserService(new InMemoryUserStorage()));
         User user=new User();
         user.setName("user");
         user.setBirthday(LocalDate.parse("1975-01-01"));
@@ -46,7 +49,7 @@ class UserControllerTest {
 
         @Test
     void postAndGetUsers() throws ValidationException {
-        UserController userController=new UserController();
+        UserController userController=new UserController(new UserService(new InMemoryUserStorage()));
         List<User> userList=new ArrayList<>();
         User user=new User();
         user.setName("user");
@@ -60,7 +63,7 @@ class UserControllerTest {
     }
     @Test
     void putUser() throws ValidationException {
-        UserController userController=new UserController();
+        UserController userController=new UserController(new UserService(new InMemoryUserStorage()));
         List<User> userList=new ArrayList<>();
         User user=new User();
         user.setName("user");
