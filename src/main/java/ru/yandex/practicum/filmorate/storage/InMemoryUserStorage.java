@@ -24,7 +24,7 @@ public class InMemoryUserStorage implements UserStorage{
                 user.setName(user.getLogin());
             }
             user.setId(generatedId++);
-            users.put(user.getId(),user);
+            users.put(user.getId(), user);
         } else {
             throw new ValidationException();
         }
@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User update(User user) throws ValidationException {
+    public User update(User user) throws ValidationException, NotFoundException {
         if (validatedUser(user)) {
             Long id = user.getId();
             if (id<0){
@@ -44,8 +44,10 @@ public class InMemoryUserStorage implements UserStorage{
                 user.setName(user.getLogin());
             }
             if (!users.containsKey(id)) {
-                users.put(id,user);
-                log.debug("Пользователь не найден. добавлен новый пользователь");
+                log.debug("Пользователь не найден. не добавлен новый пользователь");
+                throw new NotFoundException();
+                //users.put(id,user);
+                //log.debug("Пользователь не найден. добавлен новый пользователь");
             } else {
                 users.put(id,user);
                 log.debug("Польователь c идентификатором {} изменен", user.getId());
@@ -70,10 +72,16 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(Long id) throws NotFoundException {
     if (id == null){
-        return null;
+        throw new NotFoundException();
     }
+        if (!users.containsKey(id)) {
+            log.debug("Пользователь не найден. не добавлен новый пользователь");
+            throw new NotFoundException();
+
+        }
+
         return users.get(id);
     }
 

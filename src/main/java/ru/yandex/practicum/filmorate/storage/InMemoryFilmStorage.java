@@ -2,12 +2,11 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.validator.Validator.validatedFilm;
 @Slf4j
@@ -28,7 +27,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         return film;    }
 
     @Override
-    public Film update(Film film) throws ValidationException {
+    public Film update(Film film) throws ValidationException, NotFoundException {
         if (validatedFilm(film)) {
             Long id = film.getId();
             if (id<0){
@@ -36,8 +35,9 @@ public class InMemoryFilmStorage implements FilmStorage{
                 throw new ValidationException();
             }
             if (!films.containsKey(id)){
-                films.put(film.getId(), film);
-                log.debug("Фильм не найден. добавлен новый фильм");
+               // films.put(film.getId(), film);
+                log.debug("Фильм не найден. не добавлен новый фильм");
+                throw new NotFoundException();
             } else {
                 films.put(film.getId(), film);
                 log.debug("Фильм изменен под идентификатором {}", film.getId());
@@ -50,9 +50,12 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Film findById(Long id) {
+    public Film findById(Long id) throws NotFoundException {
         if (id == null){
-            return null;
+            throw new NotFoundException();
+        }
+        if(films.get(id)==null){
+            throw new NotFoundException();
         }
         return films.get(id);
     }

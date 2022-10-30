@@ -48,7 +48,7 @@ class UserControllerTest {
 
 
         @Test
-    void postAndGetUsers() throws ValidationException {
+    void postAndGetUsers() throws ValidationException, NotFoundException {
         UserController userController=new UserController(new UserService(new InMemoryUserStorage()));
         List<User> userList=new ArrayList<>();
         User user=new User();
@@ -62,7 +62,7 @@ class UserControllerTest {
 
     }
     @Test
-    void putUser() throws ValidationException {
+    void putUser() throws ValidationException, NotFoundException {
         UserController userController=new UserController(new UserService(new InMemoryUserStorage()));
         List<User> userList=new ArrayList<>();
         User user=new User();

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -26,7 +27,7 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public User addToFriends(Long idOne, Long idTho){
+    public User addToFriends(Long idOne, Long idTho) throws NotFoundException {
         User user=userStorage.findById(idOne);
         user.getFriends().add(idTho);
         user=userStorage.findById(idTho);
@@ -34,7 +35,7 @@ public class UserService {
         return user;
     }
 
-    public User deleteFromFriends(Long idOne, Long idTho){
+    public User deleteFromFriends(Long idOne, Long idTho) throws NotFoundException {
         User user=userStorage.findById(idOne);
         user.getFriends().remove(idTho);
         user=userStorage.findById(idTho);
@@ -42,7 +43,7 @@ public class UserService {
         return user;
     }
 
-    public Set<Long> findGenericFriends(Long idOne, Long idTho){
+    public Set<Long> findGenericFriends(Long idOne, Long idTho) throws NotFoundException {
         User userOne=userStorage.findById(idOne);
         User userTho=userStorage.findById(idTho);
         Set<Long> genericFriends=new HashSet<>();

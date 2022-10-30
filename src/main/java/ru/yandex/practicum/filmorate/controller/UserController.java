@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @RestController
@@ -28,39 +25,60 @@ public class UserController {
         return  userService.getUserStorage().findAll();
     }
 
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) throws NotFoundException {
+        return userService.getUserStorage().findById(id);
+    }
+
     @PostMapping
-    public User postUser(@RequestBody User user) throws ValidationException {
+    public User postUser(@RequestBody User user) throws ValidationException, NotFoundException {
         return userService.getUserStorage().create(user);
     }
 
     @PutMapping
-    public User putUser(@RequestBody User user) throws ValidationException {
+    public User putUser(@RequestBody User user) throws ValidationException, NotFoundException {
         return userService.getUserStorage().update(user);
     }
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriends(@PathVariable Long id, @PathVariable Long friendId){
-        return userService.addToFriends(id, friendId);
+    public User addFriends(@PathVariable Long id, @PathVariable Long friendId) throws NotFoundException {
+        if(userService.getUserStorage().findById(friendId)!=null) {
+            return userService.addToFriends(id, friendId);
+        }else {
+            return userService.getUserStorage().findById(id);
+        }
+
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriends(@PathVariable Long friendId, @PathVariable Long id){
+    public User deleteFriends(@PathVariable Long friendId, @PathVariable Long id) throws NotFoundException {
         return userService.deleteFromFriends(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Set<Long> findFriends(@PathVariable Long id){
-        return userService.getUserStorage().findById(id).getFriends();
+    public List<User> findFriends(@PathVariable Long id) throws NotFoundException {
+        Set<Long> set;
+        set=userService.getUserStorage().findById(id).getFriends();
+        List<User>userSet=new ArrayList<>();
+        for (Long i:set){
+            userSet.add(userService.getUserStorage().findById(i));
+        }
+        return userSet;
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Set<Long> findGenericFriends(@PathVariable Long id, @PathVariable Long otherId){
-        return userService.findGenericFriends(id, otherId);
-    }
+    public List<User> findGenericFriends(@PathVariable Long id, @PathVariable Long otherId) throws NotFoundException {
+        Set<Long> set;
+        set=userService.findGenericFriends(id, otherId);
+        List<User>userSet=new ArrayList<>();
+        for (Long i:set){
+            userSet.add(userService.getUserStorage().findById(i));
+        }
+        return userSet;    }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ValidationException.class)
-    public void handleError(final ValidationException e) {
-    }
+  //  @ResponseStatus(HttpStatus.BAD_REQUEST)
+    //@ExceptionHandler(ValidationException.class)
+   // public void handleError(final ValidationException e) {
+   // }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
