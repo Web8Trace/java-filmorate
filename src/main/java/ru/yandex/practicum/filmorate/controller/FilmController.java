@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,12 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
 
-import static ru.yandex.practicum.filmorate.validator.Validator.validatedFilm;
 
 @RestController
 @Slf4j
@@ -60,9 +57,6 @@ public class FilmController {
         }
         return filmService.liders(count);
     }
-
-
-
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
