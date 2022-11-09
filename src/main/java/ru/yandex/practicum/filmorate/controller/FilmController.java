@@ -24,8 +24,8 @@ public class FilmController {
 
     private final FilmService filmService;
     @GetMapping
-    public Collection<Film> getFilms() {
-        return filmService.getFilmStorage().findAll();
+    public List<Film> getFilms() {
+        return List.of(filmService.getFilmStorage().findAll());
     }
 
     @GetMapping("/{id}")
@@ -58,7 +58,6 @@ public class FilmController {
         if (count==null){
             count=10;
         }
-        System.out.println(count);
         return filmService.liders(count);
     }
 

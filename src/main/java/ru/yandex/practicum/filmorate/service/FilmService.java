@@ -36,22 +36,27 @@ public class FilmService {
     }
 
     public Film disLike(Long filmId, Long userId) throws NotFoundException {
+        if(filmStorage.findById(filmId)==null){
+            throw new NotFoundException();
+        }
         Film film=filmStorage.findById(filmId);
+        if(!film.getLikes().contains(userId)){
+            throw new NotFoundException();
+        }
         film.getLikes().remove(userId);
         return film;
     }
 
     public List<Film> liders(int count){
-        Collection<Film> filmCollections=filmStorage.findAll();
-        filmCollections.stream().sorted();
-        List<Film> liders=new ArrayList<>();
-        for(int i=filmCollections.size()-1; i>0; i--){
-            if(liders.size()>=count){
-                break;
+        Film[] films=filmStorage.findAll();
+        Arrays.sort(films);
+        if(count<films.length) {
+            List<Film> sortedFilms=new ArrayList<>();
+            for (int i = films.length - count; i < films.length; i++){
+                sortedFilms.add(films[i]);
             }
-
-            liders.add((Film) filmCollections.toArray()[i]);
+            return sortedFilms;
         }
-        return liders;
+        return List.of(films);
     }
 }

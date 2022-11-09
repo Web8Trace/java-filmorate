@@ -35,7 +35,7 @@ public class InMemoryFilmStorage implements FilmStorage{
                 throw new ValidationException();
             }
             if (!films.containsKey(id)){
-               // films.put(film.getId(), film);
+                //films.put(film.getId(), film);
                 log.debug("Фильм не найден. не добавлен новый фильм");
                 throw new NotFoundException();
             } else {
@@ -61,7 +61,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Collection<Film> findAll() {
-        return films.values();
+    public Film[] findAll() {
+        return films.values().toArray(new Film[0]);
     }
 }
