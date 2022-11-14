@@ -16,12 +16,11 @@ public class Film implements Comparable<Film>{
     private String description;
     private LocalDate releaseDate;
     private int duration;
-    private Set<Long>likes=new HashSet<>();
+    private Set<Long>likes = new HashSet<>();
 
 
     @Override
     public int compareTo(Film o) {
         return this.getLikes().size()-o.getLikes().size();
     }
-
 }

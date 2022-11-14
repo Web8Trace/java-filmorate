@@ -9,12 +9,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
-
 
 import java.util.*;
-
 
 @RestController
 @Slf4j
@@ -43,12 +39,11 @@ public class UserController {
     }
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriends(@PathVariable Long id, @PathVariable Long friendId) throws NotFoundException {
-        if(userService.getUserStorage().findById(friendId)!=null) {
+        if(userService.getUserStorage().findById(friendId) != null) {
             return userService.addToFriends(id, friendId);
         }else {
             return userService.getUserStorage().findById(id);
         }
-
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
@@ -60,8 +55,8 @@ public class UserController {
     public List<User> findFriends(@PathVariable Long id) throws NotFoundException {
         Set<Long> set;
         set=userService.getUserStorage().findById(id).getFriends();
-        List<User>userSet=new ArrayList<>();
-        for (Long i:set){
+        List<User>userSet = new ArrayList<>();
+        for (Long i : set){
             userSet.add(userService.getUserStorage().findById(i));
         }
         return userSet;
@@ -70,8 +65,8 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> findGenericFriends(@PathVariable Long id, @PathVariable Long otherId) throws NotFoundException {
         Set<Long> set;
-        set=userService.findGenericFriends(id, otherId);
-        List<User>userSet=new ArrayList<>();
+        set = userService.findGenericFriends(id, otherId);
+        List<User>userSet = new ArrayList<>();
         for (Long i:set){
             userSet.add(userService.getUserStorage().findById(i));
         }
@@ -85,8 +80,4 @@ public class UserController {
                 e.getMessage()
         );
     }
-
-
-
-
 }

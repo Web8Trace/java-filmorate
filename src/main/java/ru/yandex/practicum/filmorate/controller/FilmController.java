@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,13 +12,11 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
 
-
 @RestController
 @Slf4j
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
-
     private final FilmService filmService;
     @GetMapping
     public List<Film> getFilms() {
@@ -53,8 +50,8 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> lidersFilm(@RequestParam(required = false) Integer count){
-        if (count==null){
-            count=10;
+        if (count == null){
+            count = 10;
         }
         return filmService.liders(count);
     }
@@ -66,5 +63,4 @@ public class FilmController {
                 e.getMessage()
         );
     }
-
 }

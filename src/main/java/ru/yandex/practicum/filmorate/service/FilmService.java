@@ -27,19 +27,19 @@ public class FilmService {
     }
 
     public Film like(Long filmId, Long userId) throws NotFoundException {
-        if(filmStorage.findById(filmId)==null){
+        if(filmStorage.findById(filmId) == null){
             throw new NotFoundException();
         }
-        Film film=filmStorage.findById(filmId);
+        Film film = filmStorage.findById(filmId);
         film.getLikes().add(userId);
         return film;
     }
 
     public Film disLike(Long filmId, Long userId) throws NotFoundException {
-        if(filmStorage.findById(filmId)==null){
+        if(filmStorage.findById(filmId) == null){
             throw new NotFoundException();
         }
-        Film film=filmStorage.findById(filmId);
+        Film film = filmStorage.findById(filmId);
         if(!film.getLikes().contains(userId)){
             throw new NotFoundException();
         }
@@ -48,10 +48,10 @@ public class FilmService {
     }
 
     public List<Film> liders(int count){
-        Film[] films=filmStorage.findAll();
+        Film[] films = filmStorage.findAll();
         Arrays.sort(films);
-        if(count<films.length) {
-            List<Film> sortedFilms=new ArrayList<>();
+        if(count < films.length) {
+            List<Film> sortedFilms = new ArrayList<>();
             for (int i = films.length - count; i < films.length; i++){
                 sortedFilms.add(films[i]);
             }

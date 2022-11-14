@@ -28,26 +28,26 @@ public class UserService {
     }
 
     public User addToFriends(Long idOne, Long idTho) throws NotFoundException {
-        User user=userStorage.findById(idOne);
+        User user = userStorage.findById(idOne);
         user.getFriends().add(idTho);
-        user=userStorage.findById(idTho);
+        user = userStorage.findById(idTho);
         user.getFriends().add(idOne);
         return user;
     }
 
     public User deleteFromFriends(Long idOne, Long idTho) throws NotFoundException {
-        User user=userStorage.findById(idOne);
+        User user = userStorage.findById(idOne);
         user.getFriends().remove(idTho);
-        user=userStorage.findById(idTho);
+        user = userStorage.findById(idTho);
         user.getFriends().remove(idOne);
         return user;
     }
 
     public Set<Long> findGenericFriends(Long idOne, Long idTho) throws NotFoundException {
-        User userOne=userStorage.findById(idOne);
-        User userTho=userStorage.findById(idTho);
-        Set<Long> genericFriends=new HashSet<>();
-        for(Long one:userOne.getFriends()){
+        User userOne = userStorage.findById(idOne);
+        User userTho = userStorage.findById(idTho);
+        Set<Long> genericFriends = new HashSet<>();
+        for(Long one : userOne.getFriends()){
             for (Long tho:userTho.getFriends()){
                 if (one.equals(tho)){
                     genericFriends.add(one);
@@ -56,5 +56,4 @@ public class UserService {
         }
         return genericFriends;
     }
-
 }

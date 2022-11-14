@@ -30,12 +30,11 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film update(Film film) throws ValidationException, NotFoundException {
         if (validatedFilm(film)) {
             Long id = film.getId();
-            if (id<0){
+            if (id < 0){
                 log.error("id is less than zero");
                 throw new ValidationException();
             }
             if (!films.containsKey(id)){
-                //films.put(film.getId(), film);
                 log.debug("Фильм не найден. не добавлен новый фильм");
                 throw new NotFoundException();
             } else {
@@ -54,7 +53,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         if (id == null){
             throw new NotFoundException();
         }
-        if(films.get(id)==null){
+        if(films.get(id) == null){
             throw new NotFoundException();
         }
         return films.get(id);

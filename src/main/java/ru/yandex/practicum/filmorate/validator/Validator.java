@@ -9,11 +9,11 @@ import java.time.LocalDate;
 @Slf4j
 public class Validator {
     public static boolean validatedFilm(Film film) {
-        if(film.getName()==null||film.getName().isEmpty()){
+        if(film.getName() == null || film.getName().isEmpty()){
             log.error("film name is empty");
             return false;
         }
-        if(film.getDescription().length()>200){
+        if(film.getDescription().length() > 200){
             log.error("film description is so long");
             return false;
         }
@@ -21,7 +21,7 @@ public class Validator {
             log.error("film is so old");
             return false;
         }
-        if (film.getDuration()<0){
+        if (film.getDuration() < 0){
             log.error("film duration is null");
             return false;
         }

@@ -36,7 +36,7 @@ public class InMemoryUserStorage implements UserStorage{
     public User update(User user) throws ValidationException, NotFoundException {
         if (validatedUser(user)) {
             Long id = user.getId();
-            if (id<0){
+            if (id < 0){
                 log.error("id is less than zero");
                 throw new ValidationException();
             }
@@ -71,15 +71,14 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User findById(Long id) throws NotFoundException {
-    if (id == null){
-        throw new NotFoundException();
-    }
+        if (id == null){
+            throw new NotFoundException();
+        }
         if (!users.containsKey(id)) {
             log.debug("Пользователь не найден. не добавлен новый пользователь");
             throw new NotFoundException();
 
         }
-
         return users.get(id);
     }
 
