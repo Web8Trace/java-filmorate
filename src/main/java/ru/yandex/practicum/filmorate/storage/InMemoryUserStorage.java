@@ -44,10 +44,8 @@ public class InMemoryUserStorage implements UserStorage{
                 user.setName(user.getLogin());
             }
             if (!users.containsKey(id)) {
-                log.debug("Пользователь не найден. не добавлен новый пользователь");
+                log.error("Пользователь не найден. не добавлен новый пользователь");
                 throw new NotFoundException();
-                //users.put(id,user);
-                //log.debug("Пользователь не найден. добавлен новый пользователь");
             } else {
                 users.put(id,user);
                 log.debug("Польователь c идентификатором {} изменен", user.getId());
