@@ -20,40 +20,37 @@ public class FilmController {
     private final FilmService filmService;
     @GetMapping
     public List<Film> getFilms() {
-        return List.of(filmService.getFilmStorage().findAll());
+        return List.of(filmService.findAll().toArray(new Film[0]));
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable Long id) throws NotFoundException {
-        return filmService.getFilmStorage().findById(id);
+        return filmService.findById(id);
     }
 
     @PostMapping
     public Film postFilm(@RequestBody Film film) throws ValidationException {
-       return filmService.getFilmStorage().create(film);
+       return filmService.create(film);
     }
 
     @PutMapping
     public Film putFilm(@RequestBody Film film) throws ValidationException, NotFoundException {
-        return filmService.getFilmStorage().update(film);
+        return filmService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film likeToFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
-        return filmService.like(id, userId);
+    public Film setLikeToFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
+        return filmService.setLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film disLikeFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
-        return filmService.disLike(id, userId);
+    public Film removeLikeFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
+        return filmService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> lidersFilm(@RequestParam(required = false) Integer count){
-        if (count == null){
-            count = 10;
-        }
-        return filmService.liders(count);
+    public List<Film> bestOfFilms(@RequestParam(required = false, defaultValue= "10")  Integer count){
+        return filmService.getBestFilms(count);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

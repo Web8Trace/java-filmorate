@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface UserStorage{
     User create(User user) throws ValidationException, NotFoundException;
     User update(User user) throws ValidationException, NotFoundException;
-    User findByEmail(String email);
+    User findByEmail(String email) throws NotFoundException;
     User findById(Long id) throws NotFoundException;
     Collection<User> findAll();
 

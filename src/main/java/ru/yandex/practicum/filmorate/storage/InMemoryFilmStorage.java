@@ -17,50 +17,46 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film create(Film film) throws ValidationException {
-        if (validatedFilm(film)) {
-            film.setId(generatedId++);
-            films.put(film.getId(), film);
-        } else {
+        if (!validatedFilm(film)) {
             throw new ValidationException();
         }
+        film.setId(generatedId++);
+        films.put(film.getId(), film);
         log.debug("Текущее число фильмов: {}", films.size());
-        return film;    }
+        return film;
+    }
 
     @Override
     public Film update(Film film) throws ValidationException, NotFoundException {
-        if (validatedFilm(film)) {
-            Long id = film.getId();
-            if (id < 0){
-                log.error("id is less than zero");
-                throw new ValidationException();
-            }
-            if (!films.containsKey(id)){
-                log.debug("Фильм не найден. не добавлен новый фильм");
-                throw new NotFoundException();
-            } else {
-                films.put(film.getId(), film);
-                log.debug("Фильм изменен под идентификатором {}", film.getId());
-
-            }
-        } else {
+        if (!validatedFilm(film)) {
             throw new ValidationException();
+        }
+        Long id = film.getId();
+        if (id < 0){
+            log.error("id is less than zero");
+            throw new ValidationException();
+        }
+        if (!films.containsKey(id)){
+            log.debug("Фильм не найден. не добавлен новый фильм");
+            throw new NotFoundException();
+        } else {
+            films.put(film.getId(), film);
+            log.debug("Фильм изменен под идентификатором {}", film.getId());
+
         }
         return film;
     }
 
     @Override
     public Film findById(Long id) throws NotFoundException {
-        if (id == null){
-            throw new NotFoundException();
-        }
-        if(films.get(id) == null){
+        if ((id == null)||(films.get(id) == null)){
             throw new NotFoundException();
         }
         return films.get(id);
     }
 
     @Override
-    public Film[] findAll() {
-        return films.values().toArray(new Film[0]);
+    public Collection <Film> findAll() {
+        return films.values();
     }
 }

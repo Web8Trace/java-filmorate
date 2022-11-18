@@ -20,29 +20,30 @@ public class UserController {
     private final UserService userService;
     @GetMapping
     public Collection<User> getUsers() {
-        return  userService.getUserStorage().findAll();
+        return  userService.findAll();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) throws NotFoundException {
-        return userService.getUserStorage().findById(id);
+        return userService.findById(id);
     }
 
     @PostMapping
     public User postUser(@RequestBody User user) throws ValidationException, NotFoundException {
-        return userService.getUserStorage().create(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User putUser(@RequestBody User user) throws ValidationException, NotFoundException {
-        return userService.getUserStorage().update(user);
+        return userService.update(user);
     }
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriends(@PathVariable Long id, @PathVariable Long friendId) throws NotFoundException {
-        if(userService.getUserStorage().findById(friendId) != null) {
+        if(userService.findById(friendId) != null) {
             return userService.addToFriends(id, friendId);
         }else {
-            return userService.getUserStorage().findById(id);
+            //throw new NotFoundException();
+            return userService.findById(id);
         }
     }
 
@@ -53,22 +54,20 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public List<User> findFriends(@PathVariable Long id) throws NotFoundException {
-        Set<Long> set;
-        set=userService.getUserStorage().findById(id).getFriends();
+        Set<Long> setForFriends=userService.findById(id).getFriends();
         List<User>userSet = new ArrayList<>();
-        for (Long i : set){
-            userSet.add(userService.getUserStorage().findById(i));
+        for (Long i : setForFriends){
+            userSet.add(userService.findById(i));
         }
         return userSet;
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> findGenericFriends(@PathVariable Long id, @PathVariable Long otherId) throws NotFoundException {
-        Set<Long> set;
-        set = userService.findGenericFriends(id, otherId);
+        Set<Long> setForFriends = userService.findGenericFriends(id, otherId);
         List<User>userSet = new ArrayList<>();
-        for (Long i:set){
-            userSet.add(userService.getUserStorage().findById(i));
+        for (Long i:setForFriends){
+            userSet.add(userService.findById(i));
         }
         return userSet;
     }

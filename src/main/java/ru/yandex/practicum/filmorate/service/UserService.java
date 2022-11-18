@@ -3,29 +3,24 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
 public class UserService {
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public UserStorage getUserStorage() {
-        return userStorage;
-    }
-
-    public void setUserStorage(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
 
     public User addToFriends(Long idOne, Long idTho) throws NotFoundException {
         User user = userStorage.findById(idOne);
@@ -55,5 +50,21 @@ public class UserService {
             }
         }
         return genericFriends;
+    }
+
+    public User create(User user) throws ValidationException, NotFoundException{
+        return userStorage.create(user);
+    }
+    public User update(User user) throws ValidationException, NotFoundException{
+        return userStorage.update(user);
+    }
+    public User findByEmail(String email) throws NotFoundException{
+        return userStorage.findByEmail(email);
+    }
+    public User findById(Long id) throws NotFoundException{
+        return userStorage.findById(id);
+    }
+    public Collection<User> findAll(){
+        return userStorage.findAll();
     }
 }

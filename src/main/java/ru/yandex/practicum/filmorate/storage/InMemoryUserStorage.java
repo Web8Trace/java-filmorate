@@ -16,7 +16,7 @@ import static ru.yandex.practicum.filmorate.validator.Validator.validatedUser;
 @Component
 public class InMemoryUserStorage implements UserStorage{
     private final Map<Long, User> users = new HashMap<>();
-    public Long generatedId = 1L;
+    private Long generatedId = 1L;
     @Override
     public User create(User user) throws ValidationException {
         if (validatedUser(user)) {
@@ -34,39 +34,40 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User update(User user) throws ValidationException, NotFoundException {
-        if (validatedUser(user)) {
-            Long id = user.getId();
-            if (id < 0){
-                log.error("id is less than zero");
-                throw new ValidationException();
-            }
-            if (user.getName() == null || user.getName().isEmpty()){
-                user.setName(user.getLogin());
-            }
-            if (!users.containsKey(id)) {
-                log.error("Пользователь не найден. не добавлен новый пользователь");
-                throw new NotFoundException();
-            } else {
-                users.put(id,user);
-                log.debug("Польователь c идентификатором {} изменен", user.getId());
-            }
-        } else {
+        if (!validatedUser(user)) {
             throw new ValidationException();
+        }
+        Long id = user.getId();
+        if (id < 0){
+            log.error("id is less than zero");
+            throw new ValidationException();
+        }
+        if (user.getName() == null || user.getName().isEmpty()){
+            user.setName(user.getLogin());
+        }
+        if (!users.containsKey(id)) {
+            log.error("Пользователь не найден. не добавлен новый пользователь");
+            throw new NotFoundException();
+        } else {
+            users.put(id,user);
+            log.debug("Польователь c идентификатором {} изменен", user.getId());
         }
         return user;
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(String email) throws NotFoundException {
         if (email == null) {
-            return null;
+            log.debug("Пользователь не найден. email пуст");
+            throw new NotFoundException();
         }
         for (User user:users.values()){
             if (user.getEmail().equals(email)){
                 return user;
             }
         }
-        return null;
+        log.debug("Пользователь не найден");
+        throw new NotFoundException();
     }
 
     @Override
