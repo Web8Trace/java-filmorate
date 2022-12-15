@@ -1,82 +1,67 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ErrorResponse;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.Collection;
+
 
 @RestController
-@Slf4j
-@RequestMapping("/users")
+@Validated
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    @GetMapping
-    public Collection<User> getUsers() {
-        return  userService.findAll();
+
+    @PostMapping("/users")
+    public User addUser(@Valid @RequestBody User user) throws UserAlreadyException {
+
+        return userService.addUser(user);
     }
 
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) throws NotFoundException {
-        return userService.findById(id);
-    }
 
-    @PostMapping
-    public User postUser(@RequestBody User user) throws ValidationException, NotFoundException {
-        return userService.create(user);
-    }
+    @PutMapping("/users")
+    public User update(@Valid @RequestBody User user) throws UserNotFoundException {
 
-    @PutMapping
-    public User putUser(@RequestBody User user) throws ValidationException, NotFoundException {
         return userService.update(user);
     }
-    @PutMapping("/{id}/friends/{friendId}")
-    public User addFriends(@PathVariable Long id, @PathVariable Long friendId) throws NotFoundException {
-        if(userService.findById(friendId) != null) {
-            return userService.addToFriends(id, friendId);
-        }else {
-            //throw new NotFoundException();
-            return userService.findById(id);
-        }
+
+    @GetMapping("/users")
+    public Collection<User> findAll() {
+
+        return userService.findAll();
     }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriends(@PathVariable Long friendId, @PathVariable Long id) throws NotFoundException {
-        return userService.deleteFromFriends(id, friendId);
+    @GetMapping("/users/{id}")
+    public User findUserById(@PathVariable @Min(0) int id) throws UserNotFoundException {
+
+        return userService.findUserById(id);
     }
 
-    @GetMapping("/{id}/friends")
-    public List<User> findFriends(@PathVariable Long id) throws NotFoundException {
-        Set<Long> setForFriends=userService.findById(id).getFriends();
-        List<User>userSet = new ArrayList<>();
-        for (Long i : setForFriends){
-            userSet.add(userService.findById(i));
-        }
-        return userSet;
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) throws UserNotFoundException {
+        userService.addFriend(id, friendId);
     }
 
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> findGenericFriends(@PathVariable Long id, @PathVariable Long otherId) throws NotFoundException {
-        Set<Long> setForFriends = userService.findGenericFriends(id, otherId);
-        List<User>userSet = new ArrayList<>();
-        for (Long i:setForFriends){
-            userSet.add(userService.findById(i));
-        }
-        return userSet;
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) throws UserNotFoundException {
+        userService.deleteFriend(id, friendId);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ErrorResponse handleError(final NotFoundException e){
-        return new ErrorResponse(
-                e.getMessage()
-        );
+    @GetMapping("/users/{id}/friends")
+    public Collection<User> findFriends(@PathVariable @Min(0) int id) throws UserNotFoundException {
+        return userService.getAllFriends(id);
     }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Collection<User> findCommonFriends(@PathVariable @Min(0) int id, @PathVariable @Min(0) int otherId) throws UserNotFoundException {
+        return userService.findCommonFriends(id, otherId);
+    }
+
 }

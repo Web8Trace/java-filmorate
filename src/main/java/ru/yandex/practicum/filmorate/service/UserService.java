@@ -1,70 +1,96 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.util.StringUtils;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-
-    @Autowired
-    public UserService(InMemoryUserStorage userStorage) {
-        this.userStorage = userStorage;
+    public void addFriend(int userId, int friendId) throws UserNotFoundException {
+        User user =userStorage.findById(userId);
+        user.getFriends().add(friendId);
+        userStorage.update(user);
+        log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
-
-    public User addToFriends(Long idOne, Long idTho) throws NotFoundException {
-        User user = userStorage.findById(idOne);
-        user.getFriends().add(idTho);
-        user = userStorage.findById(idTho);
-        user.getFriends().add(idOne);
-        return user;
+    public void deleteFriend(int userId, int friendId) throws UserNotFoundException {
+        User user =userStorage.findById(userId);
+        user.getFriends().remove(friendId);
+        userStorage.update(user);
+        userStorage.deleteFriendship(userId,friendId);
+        log.debug("Пользователь {} удалил из друзей {}", userId, friendId);
     }
 
-    public User deleteFromFriends(Long idOne, Long idTho) throws NotFoundException {
-        User user = userStorage.findById(idOne);
-        user.getFriends().remove(idTho);
-        user = userStorage.findById(idTho);
-        user.getFriends().remove(idOne);
-        return user;
-    }
+    public Collection<User> findCommonFriends(int id, int other) throws UserNotFoundException {
+        Set<Integer> userFriends = userStorage.findById(id).getFriends();
+        Set<Integer> otherFriends = userStorage.findById(other).getFriends();
+        List<Integer> commonId = userFriends.stream().filter(otherFriends::contains)
+                .collect(Collectors.toList());
+        return commonId.stream().map(r -> {
+            try {
+                log.debug("Передан список пересекающихся друзей пользователя {} с {}", id, other);
+                return userStorage.findById(r);
+            } catch (UserNotFoundException e) {
+                userFriends.remove(r);
 
-    public Set<Long> findGenericFriends(Long idOne, Long idTho) throws NotFoundException {
-        User userOne = userStorage.findById(idOne);
-        User userTho = userStorage.findById(idTho);
-        Set<Long> genericFriends = new HashSet<>();
-        for(Long one : userOne.getFriends()){
-            for (Long tho:userTho.getFriends()){
-                if (one.equals(tho)){
-                    genericFriends.add(one);
-                }
+                return null;
             }
-        }
-        return genericFriends;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public User create(User user) throws ValidationException, NotFoundException{
-        return userStorage.create(user);
+    public Collection<User> getAllFriends(int id) throws UserNotFoundException {
+        Set<Integer> friendsId = userStorage.findById(id).getFriends();
+
+        return friendsId.stream().map(r -> {
+            try {
+                log.debug("Передан список  друзей пользователя {}", id);
+                return userStorage.findById(r);
+            } catch (UserNotFoundException e) {
+                friendsId.remove(r);
+                return null;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
-    public User update(User user) throws ValidationException, NotFoundException{
+
+    public User addUser(User user) throws UserAlreadyException {
+        checkUserName(user);
+
+        return userStorage.add(user);
+    }
+
+    public User update(User user) throws UserNotFoundException {
+        checkUserName(user);
+
         return userStorage.update(user);
     }
-    public User findByEmail(String email) throws NotFoundException{
-        return userStorage.findByEmail(email);
+
+    public Collection<User> findAll() {
+        log.info("Передан список всех Users");
+        return userStorage.findAll();
     }
-    public User findById(Long id) throws NotFoundException{
+
+    public User findUserById(int id) throws UserNotFoundException {
+        log.info("Передан пользователь id = {}", id);
         return userStorage.findById(id);
     }
-    public Collection<User> findAll(){
-        return userStorage.findAll();
+
+    private void checkUserName(User user) {
+        if (!StringUtils.hasText(user.getName())) {
+            user.setName(user.getLogin());
+        }
     }
 }

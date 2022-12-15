@@ -1,63 +1,56 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ErrorResponse;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.LikeAlreadyException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.sql.SQLException;
+import java.util.Collection;
 
 @RestController
-@Slf4j
-@RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
-    @GetMapping
-    public List<Film> getFilms() {
-        return List.of(filmService.findAll().toArray(new Film[0]));
+
+    @PostMapping("/films")
+    public Film addFilm(@Valid @RequestBody Film film) throws FilmAlreadyException {
+        return filmService.addFilm(film);
     }
 
-    @GetMapping("/{id}")
-    public Film getFilm(@PathVariable Long id) throws NotFoundException {
+    @PutMapping("/films")
+    public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException, MpaNotFoundException {
+        return filmService.updateFilm(film);
+    }
+
+    @GetMapping("/films")
+    public Collection<Film> findAll() {
+        return filmService.findAll();
+    }
+
+    @GetMapping("/films/{id}")
+    public Film findById(@PathVariable @Min(1) int id) throws FilmNotFoundException, SQLException, MpaNotFoundException {
         return filmService.findById(id);
     }
 
-    @PostMapping
-    public Film postFilm(@RequestBody Film film) throws ValidationException {
-       return filmService.create(film);
+    @PutMapping("/films/{id}/like/{userId}")
+    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException, LikeAlreadyException {
+        filmService.addLike(id, userId);
     }
 
-    @PutMapping
-    public Film putFilm(@RequestBody Film film) throws ValidationException, NotFoundException {
-        return filmService.update(film);
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(@PathVariable @Min(1) int id, @PathVariable @Min(1) int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException {
+        filmService.deleteLike(id, userId);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public Film setLikeToFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
-        return filmService.setLike(id, userId);
-    }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public Film removeLikeFilm(@PathVariable Long id, @PathVariable Long userId) throws NotFoundException {
-        return filmService.removeLike(id, userId);
-    }
-
-    @GetMapping("/popular")
-    public List<Film> bestOfFilms(@RequestParam(required = false, defaultValue= "10")  Integer count){
-        return filmService.getBestFilms(count);
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ErrorResponse handleError(final NotFoundException e){
-        return new ErrorResponse(
-                e.getMessage()
-        );
+    @GetMapping("/films/popular")
+    public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10", value = "count") int count) {
+        return filmService.findPopularFilm(count);
     }
 }
