@@ -1,11 +1,13 @@
 # java-filmorate
 Template repository for Filmorate project.  
 
-![](../../../Documents/filmorate2.png)
+![filmorate2](https://user-images.githubusercontent.com/96868763/208260797-35468cfa-a726-4486-a3c0-739f8098a5ec.png)
+
 
 *Diagrams.net диаграмма*
 
-![](../../FILM_GENRES.png)
+![FILM_GENRES](https://user-images.githubusercontent.com/96868763/208261374-538de64f-d67f-4318-b23d-194b8aba197a.png)
+
 *IntelliJ IDEA диаграмма*
 
 ### Таблица USERS
