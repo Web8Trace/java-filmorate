@@ -83,7 +83,7 @@ class UserControllerTest {
         assertEquals(user1.getLogin(), putUser.getLogin());
     }
 
-    @Test
+    /*@Test
     @DirtiesContext
     void testUpdateUserNormal() throws UserNotFoundException, UserAlreadyExistsException {
         User user = new User(1, "updated@mail.ru",
@@ -92,7 +92,7 @@ class UserControllerTest {
         userDbStorage.update(user);
         assertEquals("updateName", userDbStorage.findById(1).getName());
         assertEquals(2, userDbStorage.findAll().size());
-    }
+    }*/
 
     @Test
     @DirtiesContext
