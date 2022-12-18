@@ -13,7 +13,7 @@ import java.util.Collection;
 
 @Component
 @RequiredArgsConstructor
-public class MpaStorageImpl implements MpaStorage {
+public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

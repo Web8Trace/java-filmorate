@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -52,7 +52,7 @@ public class FilmService {
         return filmStorage.findPopularFilm(count);
     }
 
-    public Film addFilm(Film film) throws FilmAlreadyException {
+    public Film addFilm(Film film) throws FilmAlreadyExistsException {
         filmStorage.addFilm(film);
         return film;
     }

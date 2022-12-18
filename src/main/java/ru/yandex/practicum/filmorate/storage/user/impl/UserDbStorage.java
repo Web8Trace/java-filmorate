@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyException;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.FriendshipDao;
@@ -53,7 +53,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User add(User user) throws UserAlreadyException {
+    public User add(User user) throws UserAlreadyExistsException {
 
         if (user.getId() == null) {
             String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?,?,?,?)";
@@ -70,7 +70,7 @@ public class UserDbStorage implements UserStorage {
             user.setId(keyHolder.getKey().intValue());
             return user;
         } else {
-            throw new UserAlreadyException("Создание нового пользователя с id запрещено", "id",
+            throw new UserAlreadyExistsException("Создание нового пользователя с id запрещено", "id",
                     String.valueOf(user.getId()));
         }
     }

@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -62,7 +62,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film addFilm(Film film) throws FilmAlreadyException {
+    public Film addFilm(Film film) throws FilmAlreadyExistsException {
         if (film.getId() == null) {
             String sql = "INSERT INTO FILMS(NAME,DESCRIPTION,RELEASEDATE,DURATION,MPA_ID)" +
                     "VALUES ( ?,?,?,?,? )";
@@ -85,7 +85,7 @@ public class FilmDbStorage implements FilmStorage {
             }
             return film;
         } else {
-            throw new FilmAlreadyException("Создание нового фильма с id запрещено", "id",
+            throw new FilmAlreadyExistsException("Создание нового фильма с id запрещено", "id",
                     String.valueOf(film.getId()));
         }
     }

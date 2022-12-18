@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.LikeAlreadyException;
+import ru.yandex.practicum.filmorate.exception.LikeAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -20,7 +20,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping("/films")
-    public Film addFilm(@Valid @RequestBody Film film) throws FilmAlreadyException {
+    public Film addFilm(@Valid @RequestBody Film film) throws FilmAlreadyExistsException {
         return filmService.addFilm(film);
     }
 
@@ -40,7 +40,7 @@ public class FilmController {
     }
 
     @PutMapping("/films/{id}/like/{userId}")
-    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException, LikeAlreadyException {
+    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException, LikeAlreadyExistsException {
         filmService.addLike(id, userId);
     }
 

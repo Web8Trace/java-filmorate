@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyException;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -66,7 +66,7 @@ public class UserService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public User addUser(User user) throws UserAlreadyException {
+    public User addUser(User user) throws UserAlreadyExistsException {
         checkUserName(user);
 
         return userStorage.add(user);

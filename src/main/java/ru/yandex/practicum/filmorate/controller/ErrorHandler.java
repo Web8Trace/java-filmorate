@@ -29,9 +29,9 @@ public class ErrorHandler {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
     }
 
-    @ExceptionHandler({UserAlreadyException.class, FileAlreadyExistsException.class})
+    @ExceptionHandler({UserAlreadyExistsException.class, FileAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> alreadyExist(AlreadyException e) {
+    public Map<String, String> alreadyExist(AlreadyExistsException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
     }
 

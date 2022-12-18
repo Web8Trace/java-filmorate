@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmAlreadyException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -33,7 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addFilm(Film film) throws FilmAlreadyException {
+    public Film addFilm(Film film) throws FilmAlreadyExistsException {
         if (film.getId() == null) {
             film.setId(id);
             filmMap.put(film.getId(), film);
@@ -45,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Добавлен фильм: {}", film.getName());
             return film;
         } else {
-            throw new FilmAlreadyException("Фильм уже существует", "id", String.valueOf(film.getId()));
+            throw new FilmAlreadyExistsException("Фильм уже существует", "id", String.valueOf(film.getId()));
         }
 
     }

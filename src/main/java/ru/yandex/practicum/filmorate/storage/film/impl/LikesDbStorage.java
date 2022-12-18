@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class LikesStorageImpl implements LikesStorage {
+public class LikesDbStorage implements LikesStorage {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public void addLike(Integer userId, Integer filmId) {
