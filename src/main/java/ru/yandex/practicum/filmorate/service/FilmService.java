@@ -1,73 +1,73 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.LikesStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final LikesStorage likesStorage;
 
-    @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
-    
-    
-
-    public Film setLike(Long filmId, Long userId) throws NotFoundException {
-        if(filmStorage.findById(filmId) == null){
-            throw new NotFoundException();
+    public void addLike(int id, int userId) throws FilmNotFoundException, MpaNotFoundException {
+        Film film = filmStorage.findById(id);
+        if (film.getLikeSet() != null) {
+            film.getLikeSet().add(userId);
+            film.setRate(film.getRate()+1);
+        } else {
+            Set<Integer> likeSet = new HashSet<>(id);
         }
-        Film film = filmStorage.findById(filmId);
-        film.getLikes().add(userId);
+        likesStorage.addLike(userId, id);
+        filmStorage.update(film);
+        log.info("Пользователь id {} лайкнул id {}", userId, id);
+    }
+
+    public void deleteLike(int id, int userId) throws FilmNotFoundException, MpaNotFoundException {
+        Film film = filmStorage.findById(id);
+        if (film.getLikeSet() != null && film.getLikeSet().contains(userId)) {
+            film.getLikeSet().remove(userId);
+            likesStorage.deleteLike(userId, id);
+            film.setRate(film.getRate()-1);
+            filmStorage.update(film);
+            log.info("Пользователь id {} удалил лайк фильму id {}", userId, id);
+        } else {
+            throw new FilmNotFoundException("Лайк не найден", "Id", String.valueOf(id));
+        }
+    }
+
+    public Collection<Film> findPopularFilm(int count) {
+        log.info("Передан список из {} популярных фильмов", count);
+        return filmStorage.findPopularFilm(count);
+    }
+
+    public Film addFilm(Film film) throws FilmAlreadyExistsException {
+        filmStorage.addFilm(film);
         return film;
     }
 
-    public Film removeLike(Long filmId, Long userId) throws NotFoundException {
-        if(filmStorage.findById(filmId) == null){
-            throw new NotFoundException();
-        }
-        Film film = filmStorage.findById(filmId);
-        if(!film.getLikes().contains(userId)){
-            throw new NotFoundException();
-        }
-        film.getLikes().remove(userId);
-        return film;
-    }
-
-    public List<Film> getBestFilms(int count){
-        Film[] films = filmStorage.findAll().toArray(new Film[0]);
-        Arrays.sort(films);
-        if(count < films.length) {
-            List<Film> sortedFilms = new ArrayList<>();
-            for (int i = films.length - count; i < films.length; i++){
-                sortedFilms.add(films[i]);
-            }
-            return sortedFilms;
-        }
-        return List.of(films);
-    }
-
-   public Collection <Film> findAll(){
-        return filmStorage.findAll();
-   }
-
-   public Film findById(Long id) throws NotFoundException{
-        return filmStorage.findById(id);
-   }
-
-   public Film create(Film film) throws ValidationException {
-        return filmStorage.create(film);
-   }
-
-   public Film update(Film film) throws ValidationException, NotFoundException {
+    public Film updateFilm(Film film) throws FilmNotFoundException, MpaNotFoundException {
         return filmStorage.update(film);
-   }
+    }
+
+
+    public Collection<Film> findAll() {
+        log.info("Передан список всех фильмов");
+        return filmStorage.findAll();
+    }
+
+    public Film findById(int id) throws FilmNotFoundException, MpaNotFoundException {
+        return filmStorage.findById(id);
+    }
 }
